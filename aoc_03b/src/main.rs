@@ -2,6 +2,9 @@ use aoc_03::file_reader::read_file;
 use regex::Regex;
 
 fn main() {
+    use std::time::Instant;
+    let now = Instant::now();
+
     let contents = read_file("input_03.txt".to_string());
 
     fn execute_multiplier(contents: &str) -> i32 {
@@ -32,13 +35,13 @@ fn main() {
     }
     
 
-    // function to take input string, apply split_on_dont, save first element to do_vector, apply split_on_do to the remaining elements saving the bit after the "do(" to the doable_vector
+    // function to take input string, apply split_on_dont, save first element to do_vector, apply split_on_do to the remaining elements saving the bit after the "do()" to the doable_vector
     fn split_on_dont_and_do(contents: &str) -> Vec<&str> {
         let chunks_between_donts = split_on_dont(contents);
         // add first element to a new vector
         let mut doable_vector = vec![chunks_between_donts[0]];
 
-        // apply split_on_do and add all the returns to the doable_vector
+        // apply split_on_do to the remaining elements and add all the returns to the doable_vector
         for chunk in chunks_between_donts.iter().skip(1) {
             doable_vector.extend(split_on_do(chunk));
         }
@@ -53,6 +56,6 @@ fn main() {
 
     let result = execute_doable_vector(split_on_dont_and_do(&contents));
 
-    // println!("{}", contents);
     println!("{}", result);
+    println!("Time: {:?}", now.elapsed());
 }
