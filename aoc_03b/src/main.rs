@@ -53,7 +53,7 @@ fn main() {
     // apply execute_multiplier to each element of the doable_vector
     fn execute_doable_vector(doable_vector: Vec<&str>) -> i32 {
         // doable_vector.iter().map(|s| execute_multiplier(s)).sum::<i32>()
-        // parallel version - improves from ~ 120ms to ~ 30ms
+        // parallel version - improves from ~ 120ms to ~ 30ms ( ~ 8ms in release build)
         doable_vector.par_iter().map(|s| execute_multiplier(s)).sum::<i32>()
     }
 
