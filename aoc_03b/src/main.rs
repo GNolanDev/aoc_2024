@@ -1,5 +1,6 @@
 use aoc_03::file_reader::read_file;
 use regex::Regex;
+use rayon::prelude::*;
 
 fn main() {
     use std::time::Instant;
@@ -51,7 +52,9 @@ fn main() {
 
     // apply execute_multiplier to each element of the doable_vector
     fn execute_doable_vector(doable_vector: Vec<&str>) -> i32 {
-        doable_vector.iter().map(|s| execute_multiplier(s)).sum::<i32>()
+        // doable_vector.iter().map(|s| execute_multiplier(s)).sum::<i32>()
+        // parallel version - improves from ~ 120ms to ~ 30ms
+        doable_vector.par_iter().map(|s| execute_multiplier(s)).sum::<i32>()
     }
 
     let result = execute_doable_vector(split_on_dont_and_do(&contents));
