@@ -8,7 +8,7 @@ fn main() {
     /* Utility functions */
 
     // quick function with 3 return states - takes a tuple of target and vector of integers, returns -1,0,+1 to show if sum of ints is less than, eqaul to or greater than target
-    fn function_compare(data: (i64, Vec<i64>), operator: char) -> i32 {
+    fn _function_compare(data: (i64, Vec<i64>), operator: char) -> i32 {
         let target = data.0;
         let ints = data.1;
         let mut function_output = 0;
@@ -29,10 +29,9 @@ fn main() {
     // function to find every variation of addition and multiplication of integers from left to right, check for equality with a target and return true/false
     fn target_can_be_matched(data: (i64, Vec<i64>)) -> bool {
         // quick escape clause if case fails 2 simple tests
-        if function_compare(data.clone(), '+') == -1 || function_compare(data.clone(), '*') == -1 {
-            println!("No need to check: {:?}", data);
+        /* if function_compare(data.clone(), '+') == 1 || function_compare(data.clone(), '*') == -1 || function_compare(data.clone(), 'c') == 1 {
             return false;
-        }
+        } */
 
         let mut running_totals = vec![];
         running_totals.push(data.1[0] as i64);
@@ -41,6 +40,10 @@ fn main() {
             for total in running_totals {
                 new_running_totals.push(total + data.1[i] as i64);
                 new_running_totals.push(total * data.1[i] as i64);
+                // extra function - concat the two numbers & add to running total
+                let mut concat = total.to_string();
+                concat.push_str(&data.1[i].to_string());
+                new_running_totals.push(concat.parse::<i64>().unwrap());
             }
             running_totals = new_running_totals;
         }
@@ -49,11 +52,9 @@ fn main() {
 
     /* end of utility functions */
 
-
-
     // read file into a vector of strings
     let lines = read_file_to_lines("input_07.txt".to_string());
-    
+
     // input lines are in format: "123: 4 5 6" where 123 is the target and any number of integers follow the colon
     // we need to parse the target and the integers into a tuple
     let data: Vec<(i64, Vec<i64>)> = lines
