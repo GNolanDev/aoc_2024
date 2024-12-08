@@ -28,7 +28,7 @@ fn main() {
 
     // function to find every variation of addition and multiplication of integers from left to right, check for equality with a target and return true/false
     fn target_can_be_matched(data: (i64, Vec<i64>)) -> bool {
-        // quick escape clause if case fails 2 simple tests
+        // quick escape if case fails one of 2 simple tests
         if function_compare(data.clone(), '+') == -1 || function_compare(data.clone(), '*') == -1 {
             println!("No need to check: {:?}", data);
             return false;
@@ -48,8 +48,6 @@ fn main() {
     }
 
     /* end of utility functions */
-
-
 
     // read file into a vector of strings
     let lines = read_file_to_lines("input_07.txt".to_string());
