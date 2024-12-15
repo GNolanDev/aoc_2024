@@ -59,12 +59,7 @@ fn main() {
         if let Some((s, _area)) = plots.get_mut(plot_index as usize) {
             *s += sides as i32;
         }
-
-        // for each new coordinate, call the function again - only call the next function once the current one has finished
-        for new_coord in new_coords {
-            plot_finder(new_coord, &plants_grid, assigned_coords_map, plot_index, plots);
-        }
-        
+                
         true
     }
 
