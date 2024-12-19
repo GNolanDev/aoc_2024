@@ -1,27 +1,23 @@
 use aoc_14::file_reader::read_file_to_coords_vec;
-
-/**
- * Would have been quicker to just do total distance in a given direction modulo
- *  the width or height for task 1, still, useful to be closer to solving part 2
- */
+use std::time::Instant;
 
 fn main() {
+    let now = Instant::now();
     /* Utility functions */
 
-    // given a tuple of two tuples(position and velocity), a number of iterations
-    // and a width & height of grid, return the final position
-    // when position would overflow, wrap to the start/end as appropriate
-    fn final_position(
+    fn push_nth_element_positions(
         start: ((i32, i32), (i32, i32)),
-        iterations: i32,
         width: i32,
         height: i32,
-    ) -> (i32, i32) {
+        result_vector: &mut Vec<Vec<(i32, i32)>>,
+    ) -> () {
         let (pos, vel) = start;
         let (mut x, mut y) = pos;
         let (dx, dy) = vel;
+        // length of result vector
+        let iterations = result_vector.len() as i32;
 
-        for _ in 0..iterations {
+        for i in 0..iterations {
             x += dx;
             y += dy;
 
@@ -36,9 +32,10 @@ fn main() {
             } else if y >= height {
                 y = y - height;
             }
-        }
 
-        (x, y)
+            // push coordinates into the result vector at index = iteration
+            result_vector[i as usize].push((x, y));
+        }
     }
 
     // given a vector of tuples of x, y coordinates and grid dimensions, return a tuple of how many elements are in (NW, NE, SE, SW) quadrants
@@ -80,19 +77,35 @@ fn main() {
     // set width & height & number of iterations
     let width = 101;
     let height = 103;
-    let iterations = 100;
+    let iterations = 101 * 103;
 
-    // get the final position of each point after iterations
-    let final_positions: Vec<(i32, i32)> = coords
+    let mut results_vector = vec![vec![]; iterations as usize];
+
+    for c in coords.iter() {
+        push_nth_element_positions(*c, width, height, &mut results_vector);
+    }
+
+    let safety_factors = results_vector
         .iter()
-        .map(|c| final_position(*c, iterations, width, height))
-        .collect();
+        .map(|v| count_quadrants(v.to_vec(), width, height))
+        .map(|q| safety_factor(q))
+        .collect::<Vec<i32>>();
 
-    // count how many points are in each quadrant
-    let (nw, ne, se, sw) = count_quadrants(final_positions, width, height);
+    // find the index of the iteration with the smallest safety factor
+    let min_safety = safety_factors.iter().min().unwrap();
+    let min_safety_index = safety_factors.iter().position(|&x| x == *min_safety).unwrap();
 
-    // calculate the safety factor
-    let safety = safety_factor((nw, ne, se, sw));
+    println!("The index of iteration with the smallest safety factor is: {}", min_safety_index); // don't forget to add 1 for the time elapsed
 
-    println!("The safety factor is: {}", safety);
+    // output an array of dots and Xs to show the position of elements in the result iteration with the lowest safety factor
+    let mut grid = vec![vec!['.'; width as usize]; height as usize];
+    for (x, y) in results_vector[min_safety_index].iter() {
+        grid[*y as usize][*x as usize] = 'X';
+    }
+
+    for row in grid.iter() {
+        println!("{}", row.iter().collect::<String>());
+    }
+
+    println!("Elapsed time: {:.2?}", now.elapsed());
 }
